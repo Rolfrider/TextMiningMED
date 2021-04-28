@@ -3,13 +3,10 @@ from model.item import Item
 
 
 class Pattern:
-    def __init__(self, sequence_ids=None, elements=None):
-        if elements==None:
-            self.elements: List[Set[Item]] = []
-            self.sequence_ids:List[Set[string]] = []
-        else:
-            self.elements: List[Set[Item]] = elements
-            self.sequence_ids:List[Set[string]] = sequence_ids
+    def __init__(self, sequence_ids=[], elements=[]):
+        self.elements: List[Set[Item]] = elements
+        self.sequence_ids:List[string] = sequence_ids
+        self.support = len(self.sequence_ids) #czy ok??
 
     def __str__(self) -> str:
-        return self.itemsets.__str__()
+        return self.elements.__str__()

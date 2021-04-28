@@ -15,3 +15,6 @@ class Item:
         if isinstance(other, Item):
             return self.value == other.value
         return NotImplemented
+    
+    def __str__(self) -> str:
+        return self.value.__str__()

@@ -1,4 +1,5 @@
 import sys
+import math
 from typing import List, Set
 
 from model.sequence import Sequence
@@ -21,12 +22,24 @@ class SequenceDB:
         for sequence in self.sequences:
             print(sequence)
 
-    def parse_file(self, file_name: str) -> List[Sequence]:
+    def parse_file(self, file_name: str, support) -> List[Sequence]:
         #self.sequences.append(self.parse_line(line) for line in self.read_lines(file_name))
         for line in self.read_lines(file_name):
-            s= self.parse_line(line)
+            s= self.parse_line(line.rstrip())
             self.sequences.append(s)
-
+        
+        sup = int(math.ceil(support*len(self.sequences)))
+        print("Support = " +str(sup))
+        frequent_items = self.frequent_patterns.keys()
+        for i in list(frequent_items):
+            #print(i)
+            pat = self.frequent_patterns.get(i)
+            print(len(self.frequent_patterns))
+            if pat.support < sup:
+                self.frequent_patterns.pop(i)
+            print(len(self.frequent_patterns))
+            print('---------')
+        self.update_sequences(self.frequent_patterns.keys())
 
     def read_lines(self, file_name: str) -> List[str]:
         file = open(file_name, 'r')
@@ -48,10 +61,25 @@ class SequenceDB:
             elif sign == sequence_end:
                 return sequence
             else:
-                itemset.add(int(sign))
+                #itemset.add(int(sign))
                 item = self.i_factory.get_item(int(sign))
+                #print(item)
+                itemset.add(item)
                 pattern = self.frequent_patterns.get(item)
                 if pattern == None:
-                    pattern = self.p_factory.create_pattern(item, sequence.id)
+                    pattern = self.p_factory.create_pattern(sequence_ids=[sequence.id],elements=item)
                     self.frequent_patterns[item] = pattern
+                else:
+                    pattern.support+=1
         return sequence
+    
+    def update_sequences(self, items):
+        for sequence in self.sequences:
+            for itemset in sequence.itemsets:
+                for item in itemset.copy():
+                    if self.frequent_patterns.get(item) == None:
+                        print('Itemset before updating '+ str(itemset))
+                        itemset.remove(item)
+                        print('Removed item '+ str(item))
+                        print('Itemset after updating '+ str(itemset))
+        

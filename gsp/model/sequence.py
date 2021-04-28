@@ -1,9 +1,10 @@
 from typing import List, Set
 
+from model.item import Item
 
 class Sequence:
     def __init__(self):
-        self.itemsets: List[Set[int]] = []
+        self.itemsets: List[Set[Item]] = []
         self.id = hash(self)
 
     def __str__(self) -> str:
