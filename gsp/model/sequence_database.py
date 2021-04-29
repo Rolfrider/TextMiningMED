@@ -13,32 +13,29 @@ class SequenceDB:
         self.p_factory = PatternFactory()
         self.i_factory = ItemFactory()
     
-    def first_pass(self):
-        for sequence in self.sequences:
-            for item in sequence.itemsets:
-                pass
     
     def print_sequences(self):
         for sequence in self.sequences:
-            print(sequence)
+            print('Sequence '+str(sequence.id) +': '+str(sequence))
 
     def parse_file(self, file_name: str, support) -> List[Sequence]:
         #self.sequences.append(self.parse_line(line) for line in self.read_lines(file_name))
         for line in self.read_lines(file_name):
             s= self.parse_line(line.rstrip())
+            #print(s)
             self.sequences.append(s)
         
-        sup = int(math.ceil(support*len(self.sequences)))
+        sup = int(math.ceil(support*len(self.sequences))) #czy ok?
         print("Support = " +str(sup))
         frequent_items = self.frequent_patterns.keys()
         for i in list(frequent_items):
             #print(i)
             pat = self.frequent_patterns.get(i)
-            print(len(self.frequent_patterns))
+            #print(len(self.frequent_patterns))
             if pat.support < sup:
                 self.frequent_patterns.pop(i)
-            print(len(self.frequent_patterns))
-            print('---------')
+            #print(len(self.frequent_patterns))
+            #print('---------')
         self.update_sequences(self.frequent_patterns.keys())
 
     def read_lines(self, file_name: str) -> List[str]:
@@ -63,14 +60,15 @@ class SequenceDB:
             else:
                 #itemset.add(int(sign))
                 item = self.i_factory.get_item(int(sign))
-                #print(item)
-                itemset.add(item)
                 pattern = self.frequent_patterns.get(item)
                 if pattern == None:
                     pattern = self.p_factory.create_pattern(sequence_ids=[sequence.id],elements=item)
                     self.frequent_patterns[item] = pattern
                 else:
                     pattern.support+=1
+                #print(str(item))
+                itemset.add(item)
+                #print(itemset)
         return sequence
     
     def update_sequences(self, items):
@@ -78,8 +76,13 @@ class SequenceDB:
             for itemset in sequence.itemsets:
                 for item in itemset.copy():
                     if self.frequent_patterns.get(item) == None:
-                        print('Itemset before updating '+ str(itemset))
+                        #print('Itemset before updating '+ str(itemset))
                         itemset.remove(item)
-                        print('Removed item '+ str(item))
-                        print('Itemset after updating '+ str(itemset))
+                        #print('Removed item '+ str(item))
+                        #print('Itemset after updating '+ str(itemset))
+    
+    def get_frequent_items(self):
+        result = {k: v for k, v in sorted(self.frequent_patterns.items(), key=lambda item: item[0].value)}
+        #print(list(result.keys())[6])
+        return result
         
