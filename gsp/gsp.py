@@ -16,9 +16,9 @@ file_name = sys.argv[1]
 
 seqDB = SequenceDB()
 seqDB.print_sequences()
-seqDB.parse_file(file_name, 0.1)
+seqDB.parse_file(file_name, 0.8)
 seqDB.print_sequences()
 
-g = GSP(min_support=1,min_gap=2,max_gap=3, window_size=5)
+g = GSP(min_support=0.8,min_gap=2,max_gap=3, window_size=5)
 g.run(seqDB)
 
