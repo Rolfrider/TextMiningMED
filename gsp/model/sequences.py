@@ -5,20 +5,22 @@ from model.pattern import Pattern
 
 class Sequences:
     def __init__(self):
-        self.levels: List[List[Pattern]] = [List[Pattern]]
+        self.levels: List[List[Pattern]] = [[Pattern()]] #tu chyba średnio (level 0)
         self.number_of_frequent_sequences = 0
         self.description: string = ''
 
     def __str__(self) -> str:
-        str = ''
-        lvl_cnt = 0
-        for l in levels:
-            str+'Level '+str(lvl_cnt)+'\n'
-            for s in l:
-                str+='\n' #dodać== drukowanie sekwencji
-            lvl_cnt+=1
-        return str
-    
+        result =''
+        idx = 0
+        for l in self.levels:
+            result+='Level '+str(idx)
+            result+='\n'
+            for p in l:
+                result+=str(p)+' '
+            result+='\n'
+            idx+=1
+        return result
+        
     def add_sequence(self, sequence, level):
         #print(sequence)
         if len(self.levels) <= level:

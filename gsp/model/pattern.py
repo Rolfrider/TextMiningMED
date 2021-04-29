@@ -11,5 +11,4 @@ class Pattern:
         self.support = len(self.sequence_ids) #czy ok??
 
     def __str__(self) -> str:
-        #return ' '.join(str(it) for i in self.elements for it in i)+'\n'
-        return self.elements.__str__()
+        return ' '.join(str(i) for i in self.elements)

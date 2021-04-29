@@ -62,7 +62,7 @@ class SequenceDB:
                 item = self.i_factory.get_item(int(sign))
                 pattern = self.frequent_patterns.get(item)
                 if pattern == None:
-                    pattern = self.p_factory.create_pattern(sequence_ids=[sequence.id],elements=item)
+                    pattern = self.p_factory.create_pattern(sequence_ids=[sequence.id],elements=[item])
                     self.frequent_patterns[item] = pattern
                 else:
                     pattern.support+=1

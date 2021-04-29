@@ -33,7 +33,7 @@ class GSP():
     def gsp(self, seq_db, c_g, s_c, sup):
         #we get the frequent items found in the original database
         frequent_items = seq_db.get_frequent_items()
-        #print(frequent_items)
+        print(list(frequent_items.values())[0])
         
         #we add the sequences as the 1-level of patterns. NOTE: we need them
         #for generating the candidates
