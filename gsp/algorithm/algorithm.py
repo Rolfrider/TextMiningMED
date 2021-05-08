@@ -9,4 +9,5 @@ def search(min_sup: float, sequences: [Sequence]):
     k = 1
     while True:
         # Generate new candidates
+        # Count support
         # Prune candidates

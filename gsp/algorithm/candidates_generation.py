@@ -22,4 +22,4 @@ class SingleCandidatesGenerator(CandidatesGenerationStrategy):
 
 class CandidateGenerator(CandidatesGenerationStrategy):
     def generate_candidates(self, source: List[Sequence]) -> List[Sequence]:
-        pass
+        return source
