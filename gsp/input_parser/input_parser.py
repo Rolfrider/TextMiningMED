@@ -19,11 +19,11 @@ def parse_line(line: str) -> Sequence:
     itemset_end = '-1'
     sequence_end = '-2'
     sequence = Sequence()
-    itemset = set()
+    itemset = list()
     for sign in line.split(divide_sign):
         if sign == itemset_end:
             sequence.itemsets.append(itemset)
-            itemset = set()
+            itemset = list()
         elif sign == sequence_end:
             return sequence
         else:

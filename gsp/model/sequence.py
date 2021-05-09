@@ -2,7 +2,7 @@ from typing import List, Set
 
 
 class Sequence:
-    def __init__(self, itemsets: List[Set[int]] = []):
+    def __init__(self, itemsets: List[List[int]] = []):
         self.itemsets = itemsets
 
     def __str__(self) -> str:
