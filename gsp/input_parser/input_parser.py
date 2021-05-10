@@ -4,7 +4,11 @@ from typing import List
 
 
 def parse_file(file_name: str) -> List[Sequence]:
-    return [parse_line(line) for line in read_lines(file_name)]
+    result = []
+    for line in read_lines(file_name):
+        result.append(parse_line(line.rstrip('\n')))
+    # return [parse_line(line.rstrip('\n')) for line in read_lines(file_name)]
+    return result
 
 
 def read_lines(file_name: str) -> List[str]:
@@ -18,7 +22,7 @@ def parse_line(line: str) -> Sequence:
     divide_sign = ' '
     itemset_end = '-1'
     sequence_end = '-2'
-    sequence = Sequence()
+    sequence = Sequence([])
     itemset = list()
     for sign in line.split(divide_sign):
         if sign == itemset_end:
@@ -27,5 +31,5 @@ def parse_line(line: str) -> Sequence:
         elif sign == sequence_end:
             return sequence
         else:
-            itemset.add(int(sign))
+            itemset.append(int(sign))
     return sequence
