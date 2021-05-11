@@ -8,7 +8,7 @@ __candidates_generator = CandidateGenerator()
 
 
 def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
-    min_sup_absolute = int(min_sup * len(sequences))  # TODO: Check if correct
+    min_sup_absolute = int(min_sup * len(sequences))
     print("Absolute min support: {}".format(min_sup_absolute))
     candidate_generator: CandidateGenerator = None
     candidates: List[Sequence] = []
