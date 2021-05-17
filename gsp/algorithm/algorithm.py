@@ -12,6 +12,7 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
     print("Absolute min support: {}".format(min_sup_absolute))
     candidate_generator: CandidateGenerator = None
     candidates: List[Sequence] = []
+    count_freq_seq = 0
     k = 1
     while True:
         # Generate new candidates
@@ -33,11 +34,12 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
         print("k = {}".format(k))
         for can in pruned_candidates:
             print("{} and sup: {}".format(can[0], can[1]))
-
+        count_freq_seq += len(pruned_candidates)
         if not pruned_candidates:
             break
         else:
             candidates = list(
                 map(lambda can_sup: can_sup[0], pruned_candidates))
         k += 1
+    print("Freq seq: {}".format(count_freq_seq))
     return candidates
