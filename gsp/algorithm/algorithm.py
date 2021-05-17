@@ -28,7 +28,11 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
             lambda can: count_support(can, sequences), new_candidates)
         # Prune candidates
         pruned_candidates = list(filter(
-            lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_with_sup))
+            lambda can_sup: can_sup[1] > min_sup_absolute, candidates_with_sup))
+
+        print("k = {}".format(k))
+        for can in pruned_candidates:
+            print("{} and sup: {}".format(can[0], can[1]))
 
         if not pruned_candidates:
             break

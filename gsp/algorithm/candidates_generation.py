@@ -49,8 +49,7 @@ class CandidateGenerator(CandidatesGenerationStrategy):
         candidates = []
         for seq_a in source:
             for seq_b in source:
-                if seq_a != seq_b:
-                    candidates += self.new_candidates(seq_a, seq_b)
+                candidates += self.new_candidates(seq_a, seq_b)
         return remove_duplicates(candidates)
 
     def new_candidates(self, seq_a: Sequence, seq_b: Sequence) -> List[Sequence]:
@@ -60,7 +59,8 @@ class CandidateGenerator(CandidatesGenerationStrategy):
         if items_a[1:] == items_b[:-1]:
             if len(items_a) == 1 and len(items_b) == 1:
                 result.append(Sequence([items_a, items_b]))
-                result.append(Sequence([[items_a[0], items_b[0]]]))
+                if items_a[0] != items_b[0]:
+                    result.append(Sequence([[items_a[0], items_b[0]]]))
             else:
                 if items_b[-1] in seq_b.itemsets[-1] and len(seq_b.itemsets[-1]) == 1:
                     new_seq = Sequence([list(a_items)
