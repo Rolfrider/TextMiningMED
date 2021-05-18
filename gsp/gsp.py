@@ -23,4 +23,4 @@ for sequence in result:
     print("Seq: {}, sup: {}".format(seq_sup[0], seq_sup[1]))
     data_.append([seq_sup[0], seq_sup[1]])
 
-save_experiment_to_csv(data_, 'astra', 'experiments/')
+save_experiment_to_csv(data_, experiment, 'experiments/')
