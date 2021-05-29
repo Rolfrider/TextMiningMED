@@ -1,5 +1,6 @@
 from algorithm.candidates_generation import CandidateGenerator, CandidatesGenerationStrategy, SingleCandidatesGenerator
 from model.sequence import Sequence
+from model.hash_tree import generate_hash_tree, generate_k_subsets
 from typing import List
 from algorithm.support_counting import count_support
 
@@ -24,6 +25,15 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
             candidate_generator = __candidates_generator
             new_candidates = candidate_generator.generate_candidates(
                 candidates)
+        #Create hash tree for new candidates
+        h_tree = generate_hash_tree(new_candidates, 1, max_leaf=4, max_child=5)
+        #For each transaction, find all possible subsets of size "length"
+        sequences_subsets = generate_k_subsets(sequences, k)
+        #Count sypport - hash tree
+        for subset in sequences_subsets:
+            h_tree.add_support(subset)
+        candidates_frequent_hash = h_tree.get_frequent_itemsets(min_sup_absolute)
+        print(candidates_frequent_hash)
         # Count support
         candidates_with_sup = map(
             lambda can: count_support(can, sequences), new_candidates)

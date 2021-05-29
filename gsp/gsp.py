@@ -3,7 +3,7 @@ from input_parser.input_parser import parse_file
 from algorithm.algorithm import search
 from model.sequence import Sequence
 from algorithm.support_counting import count_support
-from experiments.experiment import save_experiment_to_csv
+from experiments.experiment import save_experiment_to_csv, save_experiment_to_txt
 
 file_name = sys.argv[1]
 sequences = parse_file(file_name)
@@ -23,4 +23,5 @@ for sequence in result:
     print("Seq: {}, sup: {}".format(seq_sup[0], seq_sup[1]))
     data_.append([seq_sup[0], seq_sup[1]])
 
-save_experiment_to_csv(data_, experiment, 'experiments/')
+#save_experiment_to_csv(data_, experiment, 'experiments/')
+#save_experiment_to_txt(data_, 'experiments/result.txt')
