@@ -27,11 +27,8 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
                 candidates)
         #Create hash tree for new candidates
         if k >=3:
-            #for i in new_candidates:
-            #    print(i.itemsets)
             h_tree = generate_hash_tree(new_candidates, 1, max_leaf=4, max_child=5)
-            #For each transaction, find all possible subsets of size "length"
-            #print(sequences)
+            #For each sequence find all possible subsets of size "length"
             sequences_subsets = generate_k_subsets(sequences, k)
             #print(sequences_subsets)
             #Count sypport - hash tree
@@ -41,7 +38,6 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
             
             candidates_frequent_hash = h_tree.get_frequent_itemsets(min_sup_absolute)
             print('candidates_frequent_hash ',candidates_frequent_hash)
-            print(h_tree.root.isLeaf)
         # Count support
         candidates_with_sup = map(
             lambda can: count_support(can, sequences), new_candidates)
