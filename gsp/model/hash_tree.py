@@ -1,5 +1,7 @@
 import itertools
+from model.sequence import Sequence
 from typing import List, Set
+from algorithm.support_counting import is_subseq
 
 
 class Node:
@@ -18,58 +20,53 @@ class HashTree:
 
     def hash(self, val):
         # print(val)
-        return val[0] % self.max_child
+        return val % self.max_child
 
-    def recur_insert(self, node, itemset, index, cnt):
-        #print('index: ',index)
-        #print('itemset: ',itemset)
-        if index == len(itemset):
-            if itemset in node.bucket:
-                node.bucket[itemset] += cnt
+    def recur_insert(self, node, seq: Sequence, index, cnt):
+        if index == seq.size:
+            if seq in node.bucket:
+                node.bucket[seq] += cnt
             else:
-                node.bucket[itemset] = cnt
+                node.bucket[seq] = cnt
             return
         if node.isLeaf:
-            if itemset in node.bucket:
-                node.bucket[itemset] += cnt
+            if seq in node.bucket:
+                node.bucket[seq] += cnt
             else:
-                node.bucket[itemset] = cnt
+                node.bucket[seq] = cnt
 
             if len(node.bucket) == self.max_leaf:
                 # bucket has reached its maximum capacity and its intermediate node so
                 # split and redistribute entries.
-                for old_itemset, old_cnt in node.bucket.items():
-                    hash_key = self.hash(old_itemset[index])
+                for old_seq, old_cnt in node.bucket.items():
+                    hash_key = old_seq.hashcode(index, self.max_child)
                     if hash_key not in node.children:
                         node.children[hash_key] = Node()
                     self.recur_insert(
-                        node.children[hash_key], old_itemset, index + 1, old_cnt)
+                        node.children[hash_key], old_seq, index + 1, old_cnt)
                 del node.bucket
                 node.isLeaf = False
         else:
-            hash_key = self.hash(itemset[index])
+            hash_key = seq.hashcode(index, self.max_child)
             # print(hash_key)
             if hash_key not in node.children:
                 node.children[hash_key] = Node()
-            self.recur_insert(node.children[hash_key], itemset, index + 1, cnt)
+            self.recur_insert(node.children[hash_key], seq, index + 1, cnt)
 
-    def insert(self, itemset):
-        itemset = tuple(tuple(i) for i in itemset.itemsets)
-        # print(itemset)
-        self.recur_insert(self.root, itemset, 0, 0)
+    def insert(self, seq: Sequence):
+        self.recur_insert(self.root, seq, 0, 0)
 
-    def add_support(self, itemset):
+    def add_support(self, items_seq):
         curr_node = self.root
-        # print(itemset)
-        itemset = tuple(tuple(i) for i in itemset)
+        # itemset = tuple(itemset)
         index = 0
         while True:
             if curr_node.isLeaf:
-                if itemset in curr_node.bucket:
-                    curr_node.bucket[itemset] = curr_node.bucket[itemset] + 1
+                for bucket_seq in curr_node.bucket:
+                    if items_seq[0] == bucket_seq.flatten_items and is_subseq(items_seq[1], bucket_seq):
+                        curr_node.bucket[bucket_seq] += 1
                 break
-            hash_key = self.hash(itemset[index])
-            # print(itemset[index])
+            hash_key = items_seq[0][index] % self.max_child
             if hash_key in curr_node.children:
                 curr_node = curr_node.children[hash_key]
             else:
@@ -80,7 +77,7 @@ class HashTree:
         if node.isLeaf:
             for key, value in node.bucket.items():
                 if value >= support_cnt:
-                    self.frequent_itemsets.append((list(key), value))
+                    self.frequent_itemsets.append((key, value))
             return
 
         for child in node.children.values():
@@ -92,21 +89,27 @@ class HashTree:
         return self.frequent_itemsets
 
 
-def generate_hash_tree(candidate_itemsets, length, max_leaf=4, max_child=5):
+def generate_hash_tree(candidate_sequences: [Sequence], length, max_leaf=4, max_child=5):
     htree = HashTree(max_child, max_leaf)
-    for itemset in candidate_itemsets:
-        htree.insert(itemset)
+    for seq in candidate_sequences:
+        htree.insert(seq)
     return htree
 
-# czy ok - nwm TO DO
+
+def get_flatten_itemsets(sequences: [Sequence]) -> List[int]:
+    flatten_itemsets = map(lambda seq: list(itertools.chain(
+        *seq.itemsets)), sequences)
+    return flatten_itemsets
 
 
 def generate_k_subsets(sequences, length):
-    subitemsets = []
     subsets = []
     for seq in sequences:
-        # print(seq)
-        items = [[item] for itemset in seq.itemsets for item in itemset]
-        # print('items',items)
-        subsets.extend(map(list, itertools.combinations(items, length)))
+        # subsets.extend(map(lambda x: (x, seq), map(
+        #     list, itertools.combinations(seq.flatten_items, length))))
+        new_subseq = map(
+            list, itertools.combinations(seq.flatten_items, length))
+        for sub_seq in new_subseq:
+            if (sub_seq, seq) not in subsets:
+                subsets.append((sub_seq, seq))
     return subsets

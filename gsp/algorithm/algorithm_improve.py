@@ -20,42 +20,42 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
         new_candidates: List[Sequence] = []
         if k == 1:
             candidate_generator = __single_candidate_generator
-            new_candidates = candidate_generator.generate_candidates(sequences)
+            new_candidates = candidate_generator.generate_candidates(
+                sequences)
+            # Count support
+            candidates_with_sup = map(
+                lambda can: count_support(can, sequences), new_candidates)
+            # Prune candidates
+            pruned_candidates = list(filter(
+                lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_with_sup))
+            if not pruned_candidates:
+                break
+            else:
+                candidates = list(
+                    map(lambda can_sup: can_sup[0], pruned_candidates))
         else:
             candidate_generator = __candidates_generator
             new_candidates = candidate_generator.generate_candidates(
                 candidates)
-        # Create hash tree for new candidates
-        if k >= 3:
             h_tree = generate_hash_tree(
                 new_candidates, 1, max_leaf=4, max_child=5)
             # For each sequence find all possible subsets of size "length"
             sequences_subsets = generate_k_subsets(sequences, k)
-            # print(sequences_subsets)
             # Count sypport - hash tree
             for subset in sequences_subsets:
-                # print(subset)
+
+                # print("{} - {}".format(subset[0], subset[1].itemsets))
                 h_tree.add_support(subset)
 
             candidates_frequent_hash = h_tree.get_frequent_itemsets(
                 min_sup_absolute)
-            print('candidates_frequent_hash ', candidates_frequent_hash)
-        # Count support
-        candidates_with_sup = map(
-            lambda can: count_support(can, sequences), new_candidates)
-        # Prune candidates
-        pruned_candidates = list(filter(
-            lambda can_sup: can_sup[1] > min_sup_absolute, candidates_with_sup))
-
-        print("k = {}".format(k))
-        for can in pruned_candidates:
-            print("{} and sup: {}".format(can[0], can[1]))
-        count_freq_seq += len(pruned_candidates)
-        if not pruned_candidates:
-            break
-        else:
-            candidates = list(
-                map(lambda can_sup: can_sup[0], pruned_candidates))
+            for seq, sup in candidates_frequent_hash:
+                print("{} - {}".format(seq.itemsets, sup))
+            if not candidates_frequent_hash:
+                break
+            else:
+                candidates = list(
+                    map(lambda can_sup: can_sup[0], candidates_frequent_hash))
         k += 1
     print("Freq seq: {}".format(count_freq_seq))
     return candidates
