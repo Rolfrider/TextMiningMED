@@ -56,17 +56,19 @@ class HashTree:
     def insert(self, seq: Sequence):
         self.recur_insert(self.root, seq, 0, 0)
 
-    def add_support(self, items_seq):
+    def add_support(self, seq):
         curr_node = self.root
-        # itemset = tuple(itemset)
+        #itemset = tuple(items_seq)
         index = 0
         while True:
             if curr_node.isLeaf:
                 for bucket_seq in curr_node.bucket:
-                    if items_seq[0] == bucket_seq.flatten_items and is_subseq(items_seq[1], bucket_seq):
+                    if bucket_seq == seq:
                         curr_node.bucket[bucket_seq] += 1
                 break
-            hash_key = items_seq[0][index] % self.max_child
+            #hash_key = items_seq[0][index] % self.max_child
+            #print(items_seq)
+            hash_key = seq.hashcode(index, self.max_child)
             if hash_key in curr_node.children:
                 curr_node = curr_node.children[hash_key]
             else:
@@ -105,11 +107,48 @@ def get_flatten_itemsets(sequences: [Sequence]) -> List[int]:
 def generate_k_subsets(sequences, length):
     subsets = []
     for seq in sequences:
+        #print(seq.itemsets)
         # subsets.extend(map(lambda x: (x, seq), map(
         #     list, itertools.combinations(seq.flatten_items, length))))
         new_subseq = map(
             list, itertools.combinations(seq.flatten_items, length))
+        print(len(list(new_subseq)))
         for sub_seq in new_subseq:
             if (sub_seq, seq) not in subsets:
                 subsets.append((sub_seq, seq))
     return subsets
+    
+def grouper(n, it):
+    "grouper(3, 'ABCDEFG') --> ABC DEF G"
+    it = iter(it)
+    return iter(lambda: list(itertools.islice(it, n)), [])
+    
+def generate_k_subsets_2(sequences, length):
+	subsets_1 = []
+	results_0 = []
+	results = []
+	for seq in sequences:
+		s = seq.flatten_items
+		#print('flatten items', s)
+		results_0.extend(map(list, itertools.combinations(s, length)))
+	#print('results_0', results_0)
+	for i in range(2,length):
+		for r in results_0:
+			#print('eeo')
+			subsets_2 = list(grouper(i, r))
+			#print(subsets_2[0])
+			#print(len(subsets_2))
+			#print(len(subsets_2))
+			subsets_2 = list(dict.fromkeys(set(map(tuple,subsets_2)))) # usuwanie duplikatów
+			b = [ list(x) for x in subsets_2 ]
+			results.append(b)
+	
+	#results = list(dict.fromkeys(set(map(tuple,results)))) # usuwanie duplikatów
+	#print(len(results))
+	results.extend(results_0)
+	[[1, 2], [2], [3]]
+	results = list(map(lambda x: map_tmp(x), results))
+	return map(lambda x: Sequence(x), results)
+
+def map_tmp(can_list):
+	return list(map(lambda x: x if isinstance(x, list) else [x], can_list))
