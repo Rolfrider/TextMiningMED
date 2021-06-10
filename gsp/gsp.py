@@ -30,9 +30,10 @@ print("Results improved")
 
 data_ = []
 for sequence in result:
-    seq_sup = count_support(sequence, sequences)
-    print("Seq: {}, sup: {}".format(seq_sup[0], seq_sup[1]))
-    data_.append([seq_sup[0], seq_sup[1]])
+	print(sequence)
+	seq_sup = count_support(sequence, sequences)
+	print("Seq: {}, sup: {}".format(seq_sup[0], seq_sup[1]))
+	data_.append([seq_sup[0], seq_sup[1]])
 
 #save_experiment_to_csv(data_, experiment, 'experiments/')
 #save_experiment_to_txt(data_, 'experiments/result.txt')

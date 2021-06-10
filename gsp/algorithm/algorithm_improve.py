@@ -1,6 +1,6 @@
 from algorithm.candidates_generation import CandidateGenerator, CandidatesGenerationStrategy, SingleCandidatesGenerator
 from model.sequence import Sequence
-from model.hash_tree import generate_hash_tree, generate_k_subsets_2
+from model.hash_tree import generate_hash_tree, generate_k_subsets_3
 from typing import List
 from algorithm.support_counting import count_support
 
@@ -28,6 +28,7 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
             # Prune candidates
             pruned_candidates = list(filter(
                 lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_with_sup))
+            count_freq_seq += len(pruned_candidates)
             if not pruned_candidates:
                 break
             else:
@@ -39,34 +40,47 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
         	# Count support
         	candidates_with_sup = map(lambda can: count_support(can, sequences), new_candidates)
         	# Prune candidates
-        	pruned_candidates = list(filter(
-        	lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_with_sup))
+        	pruned_candidates = list(filter(lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_with_sup))
+        	count_freq_seq += len(pruned_candidates)
+        	if not pruned_candidates:
+        		break
+        	else:
+        		candidates = list(map(lambda can_sup: can_sup[0], pruned_candidates))
         	print("k = {}".format(k))
         	for can in pruned_candidates:
         		print("{} and sup: {}".format(can[0], can[1]))
         else:
         	candidate_generator = __candidates_generator
         	new_candidates = candidate_generator.generate_candidates(candidates)
+        	#for s in new_candidates:
+        		#print('sequence: ', s.itemsets)
+        	#print(len(new_candidates))
         	h_tree = generate_hash_tree(new_candidates, 1, max_leaf=4, max_child=5)
         	# For each sequence find all possible subsets of size "length"
-        	print(k)
-        	sequences_subsets = generate_k_subsets_2(sequences, k)
+        	sequences_subsets = generate_k_subsets_3(sequences, k)
+        	#print(len(sequences_subsets))
         	# Count sypport - hash tree
-        	print(type(sequences_subsets))
+        	#print(type(sequences_subsets))
         	for subset in sequences_subsets:
-        		print(subset)
+        		#print(subset)
         		# print("{} - {}".format(subset[0], subset[1].itemsets))
         		h_tree.add_support(subset)
         	
+        	#print('min_sup_absolute', min_sup_absolute)
         	candidates_frequent_hash = h_tree.get_frequent_itemsets(min_sup_absolute)
-        	print(candidates_frequent_hash)
-        	for seq, sup in candidates_frequent_hash:
-        		print("{} - {}".format(seq.itemsets, sup))
+        	#print(candidates_frequent_hash)
+        	#print(candidates_frequent_hash)
+        	count_freq_seq += len(pruned_candidates)
         	if not candidates_frequent_hash:
-        		print('break!')
         		break
         	else:
+        		#print('eeeo',candidates_frequent_hash[0])
         		candidates = list(map(lambda can_sup: can_sup[0], candidates_frequent_hash))
+        		#print('candidates[0]', candidates[0])
+        	print("k = {}".format(k))
+        	for seq, sup in candidates_frequent_hash:
+        		print("{} and sup: {}".format(seq.itemsets, sup))
+        	
         k += 1
     print("Freq seq: {}".format(count_freq_seq))
     return candidates
