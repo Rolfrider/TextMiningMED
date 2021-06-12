@@ -1,6 +1,6 @@
 from algorithm.candidates_generation import CandidateGenerator, CandidatesGenerationStrategy, SingleCandidatesGenerator
 from model.sequence import Sequence
-from model.hash_tree import generate_hash_tree, generate_k_subsets_3
+from model.hash_tree import generate_hash_tree, generate_k_subsets
 from typing import List
 from algorithm.support_counting import count_support
 
@@ -15,6 +15,7 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
     candidates: List[Sequence] = []
     count_freq_seq = 0
     k = 1
+    sequences_subsets = generate_k_subsets(sequences)
     while True:
         # Generate new candidates
         new_candidates: List[Sequence] = []
@@ -52,31 +53,19 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
         else:
         	candidate_generator = __candidates_generator
         	new_candidates = candidate_generator.generate_candidates(candidates)
-        	#for s in new_candidates:
-        		#print('sequence: ', s.itemsets)
-        	#print(len(new_candidates))
         	h_tree = generate_hash_tree(new_candidates, 1, max_leaf=4, max_child=5)
         	# For each sequence find all possible subsets of size "length"
-        	sequences_subsets = generate_k_subsets_3(sequences, k)
-        	#print(len(sequences_subsets))
-        	# Count sypport - hash tree
-        	#print(type(sequences_subsets))
-        	for subset in sequences_subsets:
-        		#print(subset)
-        		# print("{} - {}".format(subset[0], subset[1].itemsets))
+        	for subset in sequences_subsets[k]:
+        		s = subset.flatten_items
         		h_tree.add_support(subset)
         	
-        	#print('min_sup_absolute', min_sup_absolute)
         	candidates_frequent_hash = h_tree.get_frequent_itemsets(min_sup_absolute)
-        	#print(candidates_frequent_hash)
-        	#print(candidates_frequent_hash)
+        	pruned_candidates = list(filter(lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_frequent_hash))
         	count_freq_seq += len(pruned_candidates)
         	if not candidates_frequent_hash:
         		break
         	else:
-        		#print('eeeo',candidates_frequent_hash[0])
         		candidates = list(map(lambda can_sup: can_sup[0], candidates_frequent_hash))
-        		#print('candidates[0]', candidates[0])
         	print("k = {}".format(k))
         	for seq, sup in candidates_frequent_hash:
         		print("{} and sup: {}".format(seq.itemsets, sup))

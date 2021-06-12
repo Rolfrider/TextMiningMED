@@ -96,55 +96,59 @@ def generate_hash_tree(candidate_sequences: [Sequence], length, max_leaf=4, max_
 def get_flatten_itemsets(sequences: [Sequence]) -> List[int]:
     flatten_itemsets = map(lambda seq: list(itertools.chain(
         *seq.itemsets)), sequences)
-    return flatten_itemsets
-
-
-def generate_k_subsets(sequences, length):
-    subsets = []
-    for seq in sequences:
-        #print(seq.itemsets)
-        # subsets.extend(map(lambda x: (x, seq), map(
-        #     list, itertools.combinations(seq.flatten_items, length))))
-        new_subseq = map(
-            list, itertools.combinations(seq.flatten_items, length))
-        #print(len(list(new_subseq)))
-        for sub_seq in new_subseq:
-            if (sub_seq, seq) not in subsets:
-                subsets.append((sub_seq, seq))
-    return subsets
+    return flatten_itemsets    
 
 def map_tmp(can_list):
 	return list(map(lambda x: x if isinstance(x, list) else [x], can_list))
+
+#https://rosettacode.org/wiki/Non-continuous_subsequences	
+def ncsub(seq, s=0):
+    if seq:
+        x = seq[:1]
+        xs = seq[1:]
+        p2 = s % 2
+        p1 = not p2
+        return [x + ys for ys in ncsub(xs, s + p1)] + ncsub(xs, s + p2)
+    else:
+        return [[]] if s >= 3 else []
 	
-def generate_k_subsets_3(sequences, length):
-	results_0 = []
-	results_1 = []
-	results = []
+def generate_k_subsets(sequences):
+	subsets = {}
+	max_len = 0
 	for seq in sequences:
 		s = seq.flatten_items
-		results_temp = list(map(list, itertools.combinations(s, length)))
-		#print('len(results_temp) before',len(results_temp))
-		r_set = set(tuple(x) for x in results_temp)
-		results_temp = [list(ele) for ele in r_set]
-		#print('len(results_temp) after',len(results_temp))
-		results_0.extend(results_temp)
-		#print(results_0)
-
-		for r in results_0:
-			for i in range(1,length):
-				left_slice = r[:i]
-				l = (len(r)-i)
-				right_slice = r[-l:]
-				results_1.append([left_slice, right_slice])
-				# results.append([left_slice, right_slice])
-			results_1 = [[tuple(ele) for ele in sub] for sub in results_1]
-			r_set = set(tuple(x) for x in results_1)
-			results_1 = [[list(ele) for ele in sub] for sub in r_set]
-			# print(results_1)
-	results.extend(results_0)
-	results.extend(results_1)
-	results = list(map(lambda x: map_tmp(x), results))
-	#results = [[tuple(ele) for ele in sub] for sub in results]
-	#r_set = set(tuple(x) for x in results)
-	#results = [[list(ele) for ele in sub] for sub in r_set]
-	return list(map(lambda x: Sequence(x), results))
+		if len(s)>max_len:
+			max_len = len(s)
+	for i in range(3, max_len):
+		subsets[i] = []
+	for seq in sequences:
+		s = seq.flatten_items
+		results_temp = 	ncsub(s)
+		subsets_k = {}
+		for i in range(3,len(s)):
+			subsets_k[i] = []
+			for r in results_temp:
+				if len(r) == i:
+					subsets_k[i].append(r)
+			r_set = set(tuple(x) for x in subsets_k[i])
+			subsets_k[i] = [list(ele) for ele in r_set]
+		for i in range(3, len(s)):
+			results_it = []
+			for r in subsets_k[i]:
+				for l in range(1,len(r)):
+					left_slice = r[:l]
+					right_slice = r[-(len(r)-l):]
+					new_subset = [left_slice, right_slice]
+					if new_subset not in results_it:
+						results_it.append(new_subset)
+			
+			for j in results_it:
+				subsets_k[i].append(j)
+		for i in range(3, len(s)):
+			subsets_k[i] = list(map(lambda x: map_tmp(x), subsets_k[i]))
+			subsets_k[i] = list(map(lambda x: Sequence(x), subsets_k[i]))
+			subsets[i].extend(subsets_k[i])
+		
+	return subsets		
+	#return list(map(lambda x: Sequence(x), results))
+	
