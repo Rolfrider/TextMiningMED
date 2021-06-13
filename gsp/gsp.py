@@ -14,7 +14,7 @@ for sequence in sequences:
 
 min_sup = float(sys.argv[2])
 
-experiment = 'astra'  # ustawić w zależności od eksperymentu
+#experiment = 'moderna'  # ustawić w zależności od eksperymentu
 
 result = search(min_sup, sequences)
 print("Results")
@@ -27,7 +27,8 @@ for sequence in result:
     data_.append([seq_sup[0], seq_sup[1]])
     data_viz.append(seq_sup[0])
 
-#visualiser = Visualise( [['A', 'B'], ['A,C', 'D']])
+#save_experiment_to_csv(data_, experiment, 'experiments/')
+
 visualiser = Visualise(data_viz)
 visualiser.draw()
 
@@ -39,6 +40,3 @@ for sequence in result:
 	seq_sup = count_support(sequence, sequences)
 	print("Seq: {}, sup: {}".format(seq_sup[0], seq_sup[1]))
 	data_.append([seq_sup[0], seq_sup[1]])
-
-#save_experiment_to_csv(data_, experiment, 'experiments/')
-#save_experiment_to_txt(data_, 'experiments/result.txt')
