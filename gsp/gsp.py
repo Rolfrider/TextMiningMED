@@ -5,6 +5,7 @@ from algorithm.algorithm_improve import search as improve_search
 from model.sequence import Sequence
 from algorithm.support_counting import count_support
 from experiments.experiment import save_experiment_to_csv
+from experiments.visualise import Visualise
 import time
 
 file_name = sys.argv[1]
@@ -19,6 +20,15 @@ start_time = time.time()
 result = search(min_sup, sequences)
 end_time = time.time()
 print("Results in {}".format(end_time - start_time))
+
+#visulaise frequent sequences
+data_viz = []
+for sequence in result:
+    seq_sup = count_support(sequence, sequences)
+    data_viz.append(seq_sup[0])
+    
+visualiser = Visualise(data_viz)
+visualiser.draw()
 
 seqces = sequences
 start_time = time.time()
