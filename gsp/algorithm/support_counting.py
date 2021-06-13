@@ -22,3 +22,11 @@ def __find_items_in_seq(items: List[int], seq_iter: Iterator) -> bool:
                 return True
         except StopIteration:
             return False
+
+
+def is_subseq(sequence: Sequence, subseq: Sequence) -> bool:
+    seq_iter = iter(sequence.itemsets)
+    for items in subseq.itemsets:
+        if not __find_items_in_seq(items, seq_iter):
+            return False
+    return True

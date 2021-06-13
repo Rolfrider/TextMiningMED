@@ -8,7 +8,7 @@ __candidates_generator = CandidateGenerator()
 
 
 def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
-    min_sup_absolute = int(min_sup * len(sequences))
+    min_sup_absolute = min_sup * len(sequences)
     print("Absolute min support: {}".format(min_sup_absolute))
     candidate_generator: CandidateGenerator = None
     candidates: List[Sequence] = []
@@ -29,7 +29,7 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
             lambda can: count_support(can, sequences), new_candidates)
         # Prune candidates
         pruned_candidates = list(filter(
-            lambda can_sup: can_sup[1] > min_sup_absolute, candidates_with_sup))
+            lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_with_sup))
 
         print("k = {}".format(k))
         for can in pruned_candidates:

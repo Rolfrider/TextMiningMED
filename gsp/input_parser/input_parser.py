@@ -17,6 +17,7 @@ def parse_file(file_name: str) -> List[Sequence]:
                 itemset = list()
             elif sign == sequence_end:
                 result.append(sequence)
+                sequence.calc_all_items()
                 sequence = Sequence([])
             elif sign == '':
                 continue
@@ -46,4 +47,5 @@ def parse_seq(line: str) -> Sequence:
             return sequence
         else:
             itemset.append(int(sign))
+    sequence.calc_all_items()
     return sequence
