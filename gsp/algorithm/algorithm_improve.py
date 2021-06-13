@@ -33,6 +33,10 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
             else:
                 candidates = list(
                     map(lambda can_sup: can_sup[0], pruned_candidates))
+            # sequences = list(
+            #     map(lambda x: x.prune_not_freq(candidates), sequences))
+            for seq in sequences:
+                seq.prune_not_freq(candidates)
         elif k == 2:
             candidate_generator = __candidates_generator
             new_candidates = candidate_generator.generate_candidates(
@@ -45,6 +49,8 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
                 lambda can_sup: can_sup[1] >= min_sup_absolute, candidates_with_sup))
             candidates = list(
                 map(lambda can_sup: can_sup[0], pruned_candidates))
+            for seq in sequences:
+                seq.prune_not_freq(candidates)
         else:
             candidate_generator = __candidates_generator
             new_candidates = candidate_generator.generate_candidates(
@@ -68,6 +74,8 @@ def search(min_sup: float, sequences: [Sequence]) -> List[Sequence]:
             else:
                 candidates = list(
                     map(lambda can_sup: can_sup[0], candidates_frequent_hash))
+            for seq in sequences:
+                seq.prune_not_freq(candidates)
         k += 1
     print("Freq seq: {}".format(count_freq_seq))
     return candidates

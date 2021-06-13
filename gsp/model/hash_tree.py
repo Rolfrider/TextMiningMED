@@ -108,7 +108,6 @@ def get_flatten_itemsets(sequences: [Sequence]) -> List[int]:
 def generate_k_subsets(sequences, length):
     subsets = []
     for seq in sequences:
-        print("Generate subseq for candidate: {}".format(seq.itemsets))
         new_itemsets = generate_k_itemsets(seq.itemsets, length)
         new_sequences = list(map(lambda x: Sequence(x), new_itemsets))
         unique_sequences = remove_duplicates(new_sequences)

@@ -28,3 +28,17 @@ class Sequence:
 
     def hashcode(self, index: int, mod_value: int) -> int:
         return self.flatten_items[index] % mod_value
+
+    def prune_not_freq(self, freq):
+        new_itemsets = []
+        freq_items = []
+        for seq in freq:
+            freq_items.extend(seq.flatten_items)
+        for itemset in self.itemsets:
+            for item in itemset:
+                if item not in freq_items:
+                    itemset.remove(item)
+            if itemset:
+                new_itemsets.append(itemset)
+        self.itemsets = new_itemsets
+        self.calc_all_items()

@@ -5,6 +5,7 @@ from algorithm.algorithm_improve import search as improve_search
 from model.sequence import Sequence
 from algorithm.support_counting import count_support
 from experiments.experiment import save_experiment_to_csv
+import time
 
 file_name = sys.argv[1]
 sequences = parse_file(file_name)
@@ -14,25 +15,16 @@ for sequence in sequences:
 min_sup = float(sys.argv[2])
 
 experiment = 'astra'  # ustawić w zależności od eksperymentu
-
+start_time = time.time()
 result = search(min_sup, sequences)
-print("Results")
+end_time = time.time()
+print("Results in {}".format(end_time - start_time))
 
-data_ = []
-for sequence in result:
-    seq_sup = count_support(sequence, sequences)
-    print("Seq: {}, sup: {}".format(seq_sup[0], seq_sup[1]))
-    data_.append([seq_sup[0], seq_sup[1]])
-
-
-result = improve_search(min_sup, sequences)
-print("Results improved")
-
-data_ = []
-for sequence in result:
-    seq_sup = count_support(sequence, sequences)
-    print("Seq: {}, sup: {}".format(seq_sup[0], seq_sup[1]))
-    data_.append([seq_sup[0], seq_sup[1]])
+seqces = sequences
+start_time = time.time()
+result = improve_search(min_sup, seqces)
+end_time = time.time()
+print("Results improved in {}".format(end_time - start_time))
 
 #save_experiment_to_csv(data_, experiment, 'experiments/')
 #save_experiment_to_txt(data_, 'experiments/result.txt')
