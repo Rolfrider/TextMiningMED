@@ -8,8 +8,8 @@ from experiments.experiment import save_experiment_to_csv
 
 file_name = sys.argv[1]
 sequences = parse_file(file_name)
-#for sequence in sequences:
-#    print(sequence)
+for sequence in sequences:
+    print(sequence)
 
 min_sup = float(sys.argv[2])
 
